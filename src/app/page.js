@@ -2,6 +2,8 @@
 /* eslint-disable react-hooks/static-components */
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import React, { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
