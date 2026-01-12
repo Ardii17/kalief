@@ -200,7 +200,7 @@ export default function Invitation() {
     setWishes([newWish, ...wishes]);
     setInputName("");
     setInputMessage("");
-    alert("Terima kasih atas ucapan dan doanya!");
+    alert("Terima kasih atas ucapan dan doanya!!");
   };
 
   useEffect(() => {
