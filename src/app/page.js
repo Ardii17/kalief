@@ -3,6 +3,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import {
   Calendar,
@@ -16,6 +17,10 @@ import {
   CheckCircle,
   XCircle,
 } from "lucide-react";
+
+// --- BARU: IMPORT AOS & CSS-NYA ---
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 // --- DATA UNDANGAN ---
 const DATA = {
@@ -44,8 +49,9 @@ const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data
 )}&bgcolor=ffffff&color=064e3b`;
 
 // --- COMPONENT ORNAMEN ---
-const CornerOrnament = ({ className }) => (
+const CornerOrnament = ({ className, aos }) => (
   <svg
+    data-aos={aos}
     viewBox="0 0 100 100"
     className={`w-24 h-24 md:w-32 md:h-32 absolute fill-current ${className}`}
   >
@@ -117,9 +123,7 @@ const Countdown = ({ targetDate }) => {
 
   const TimeBox = ({ val, label }) => (
     <div className="flex flex-col items-center bg-emerald-800/80 p-2 md:p-3 rounded-lg border border-amber-400/40 w-16 md:w-20 backdrop-blur-sm shadow-lg">
-      <span
-        className={`text-xl md:text-2xl font-bold text-amber-300 `}
-      >
+      <span className={`text-xl md:text-2xl font-bold text-amber-300 `}>
         {val}
       </span>
       <span className="text-[10px] md:text-xs text-amber-100 uppercase tracking-widest">
@@ -143,6 +147,8 @@ export default function Invitation() {
   const [isPlaying, setIsPlaying] = useState(false);
   const contentRef = useRef(null);
   const audioRef = useRef(null);
+  const searchParams = useSearchParams();
+  const guestName = searchParams.get("to") || "Tamu Undangan";
 
   // State untuk Ucapan & Doa
   const [wishes, setWishes] = useState([
@@ -197,6 +203,14 @@ export default function Invitation() {
     alert("Terima kasih atas ucapan dan doanya!");
   };
 
+  useEffect(() => {
+    AOS.init({
+      duration: 1000, // Durasi animasi (1 detik)
+      once: false, // Jika true: animasi hanya sekali. Jika false: animasi ulang saat scroll naik turun
+      easing: "ease-out-cubic", // Gaya animasi agar smooth
+    });
+  }, []);
+
   return (
     // FIX: Menggunakan h-dvh agar pas di browser mobile dengan address bar
     <div
@@ -224,6 +238,7 @@ export default function Invitation() {
       <section className="relative h-dvh w-full flex flex-col items-center justify-center p-6 overflow-hidden z-20">
         <div className="absolute inset-0 bg-linear-to-b from-emerald-900 via-emerald-950 to-emerald-950 z-[-2]"></div>
 
+        {/* Background Ornamen Bulat */}
         <div className="absolute z-[-1] w-112.5 h-112.5 md:w-162.5 md:h-162.5 rounded-full flex items-center justify-center overflow-hidden opacity-30 border-[3px] border-amber-400/20">
           <Image
             src={DATA.coverOrnamentImg}
@@ -236,18 +251,27 @@ export default function Invitation() {
           <div className="absolute inset-0 bg-amber-500 mix-blend-overlay opacity-40"></div>
         </div>
 
-        <CornerOrnament className="top-0 left-0 text-amber-500" />
-        <CornerOrnament className="top-0 right-0 text-amber-500 transform scale-x-[-1]" />
-        <CornerOrnament className="bottom-0 left-0 text-amber-500 transform scale-y-[-1]" />
-        <CornerOrnament className="bottom-0 right-0 text-amber-500 transform scale-[-1]" />
-
+        <CornerOrnament
+          aos="fade-down-right"
+          className="top-0 left-0 text-amber-500"
+        />
+        <CornerOrnament
+          aos="fade-down-right"
+          className="top-0 right-0 text-amber-500 transform scale-x-[-1]"
+        />
+        <CornerOrnament
+          aos="fade-down-right"
+          className="bottom-0 left-0 text-amber-500 transform scale-y-[-1]"
+        />
+        <CornerOrnament
+          aos="fade-down-right"
+          className="bottom-0 right-0 text-amber-500 transform scale-[-1]"
+        />
         <div className="text-center z-10 space-y-5 animate-fade-in-up relative">
           <DividerOrnament className="text-amber-400 opacity-90" />
 
           <div className="mb-6">
-            <span
-              className={`inline-block px-5 py-1.5 rounded-full bg-emerald-900/60 border border-amber-400/40 text-amber-200 tracking-[0.2em] text-sm md:text-base uppercase backdrop-blur-md `}
-            >
+            <span className="inline-block px-5 py-1.5 rounded-full bg-emerald-900/60 border border-amber-400/40 text-amber-200 tracking-[0.2em] text-sm md:text-base uppercase backdrop-blur-md">
               {DATA.tanggal}
             </span>
           </div>
@@ -256,15 +280,24 @@ export default function Invitation() {
             Walimatul Khitan
           </p>
 
-          <h1
-            className={` text-6xl md:text-8xl text-transparent bg-clip-text bg-linear-to-b from-amber-300 to-amber-500 font-bold leading-tight drop-shadow-2xl py-2`}
-          >
+          <h1 className="text-6xl md:text-8xl text-transparent bg-clip-text bg-linear-to-b from-amber-300 to-amber-500 font-bold leading-tight drop-shadow-2xl py-2">
             {DATA.namaPanggilan}
           </h1>
 
-          <div className="mt-12 pb-10">
-            {" "}
-            {/* Added pb-10 safe area for mobile bottom */}
+          {/* --- BAGIAN BARU: NAMA TAMU DARI URL --- */}
+          <div className="mt-8 flex flex-col items-center gap-2 animate-pulse-slow">
+            <p className="text-sm text-emerald-200/80 font-light tracking-widest italic">
+              Kepada Yth. Bapak/Ibu/Saudara/i
+            </p>
+            <div className="px-6 py-3 rounded-xl bg-emerald-900/40 border border-amber-500/30 backdrop-blur-sm shadow-[0_0_15px_rgba(0,0,0,0.2)]">
+              <h3 className="text-xl md:text-xl font-bold text-amber-300 capitalize text-shadow-sm">
+                {guestName}
+              </h3>
+            </div>
+          </div>
+          {/* --------------------------------------- */}
+
+          <div className="mt-10 pb-10">
             <button
               onClick={handleOpen}
               className="group relative px-8 py-3 bg-linear-to-r from-emerald-800 to-emerald-700 text-amber-300 rounded-full border border-amber-400/70 hover:from-amber-500 hover:to-amber-600 hover:text-white transition-all duration-500 shadow-[0_0_20px_rgba(251,191,36,0.2)] overflow-hidden hover:shadow-[0_0_30px_rgba(251,191,36,0.6)] hover:scale-105 active:scale-95"
@@ -326,9 +359,7 @@ export default function Invitation() {
             <p className="text-sm uppercase tracking-widest opacity-80">
               Putra tercinta dari:
             </p>
-            <p
-              className={` text-xl text-amber-200 font-medium`}
-            >
+            <p className={` text-xl text-amber-200 font-medium`}>
               {DATA.namaAyah} & {DATA.namaIbu}
             </p>
           </div>
@@ -356,13 +387,14 @@ export default function Invitation() {
           </h2>
 
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto relative z-10">
-            <div className="bg-emerald-950/80 p-8 rounded-2xl border border-amber-500/30 shadow-[0_5px_15px_rgba(0,0,0,0.2)] hover:border-amber-400 transition-colors group">
+            <div
+              data-aos="fade-right"
+              className="bg-emerald-950/80 p-8 rounded-2xl border border-amber-500/30 shadow-[0_5px_15px_rgba(0,0,0,0.2)] hover:border-amber-400 transition-colors group"
+            >
               <div className="w-16 h-16 bg-emerald-900 rounded-full flex items-center justify-center mx-auto mb-4 border border-amber-500/50 group-hover:bg-amber-500/10 transition-colors">
                 <Calendar className="w-8 h-8 text-amber-400" />
               </div>
-              <h3
-                className={` text-2xl font-bold text-amber-200 mb-3`}
-              >
+              <h3 className={` text-2xl font-bold text-amber-200 mb-3`}>
                 Waktu & Tanggal
               </h3>
               <p className="text-emerald-100 font-medium text-lg">
@@ -371,13 +403,14 @@ export default function Invitation() {
               <p className="text-emerald-300 mt-1">{DATA.waktu}</p>
             </div>
 
-            <div className="bg-emerald-950/80 p-8 rounded-2xl border border-amber-500/30 shadow-[0_5px_15px_rgba(0,0,0,0.2)] hover:border-amber-400 transition-colors group">
+            <div
+              data-aos="fade-left"
+              className="bg-emerald-950/80 p-8 rounded-2xl border border-amber-500/30 shadow-[0_5px_15px_rgba(0,0,0,0.2)] hover:border-amber-400 transition-colors group"
+            >
               <div className="w-16 h-16 bg-emerald-900 rounded-full flex items-center justify-center mx-auto mb-4 border border-amber-500/50 group-hover:bg-amber-500/10 transition-colors">
                 <MapPin className="w-8 h-8 text-amber-400" />
               </div>
-              <h3
-                className={` text-2xl font-bold text-amber-200 mb-3`}
-              >
+              <h3 className={` text-2xl font-bold text-amber-200 mb-3`}>
                 Lokasi
               </h3>
               <p className="text-emerald-100 text-sm leading-relaxed px-4 mb-6">
@@ -386,7 +419,10 @@ export default function Invitation() {
             </div>
           </div>
 
-          <div className="mt-12 bg-white p-4 inline-block rounded-2xl shadow-[0_10px_25px_rgba(0,0,0,0.2)] max-w-xs border-4 border-amber-400/30 relative group">
+          <div
+            data-aos="fade-up"
+            className="mt-12 bg-white p-4 inline-block rounded-2xl shadow-[0_10px_25px_rgba(0,0,0,0.2)] max-w-xs border-4 border-amber-400/30 relative group"
+          >
             <div className="absolute -inset-1 bg-linear-to-tr from-amber-400 to-emerald-500 rounded-2xl blur opacity-20 group-hover:opacity-40 transition-opacity"></div>
             <div className="relative bg-white rounded-xl p-2">
               <h3 className="text-emerald-800 font-bold mb-3 text-sm uppercase tracking-widest">
@@ -411,9 +447,7 @@ export default function Invitation() {
         {/* --- BAGIAN BARU: UCAPAN & DOA (GUEST BOOK) --- */}
         <section className="py-16 px-6 text-center max-w-3xl mx-auto">
           <DividerOrnament className="text-amber-500/50 w-24 mb-4" />
-          <h2
-            className={` text-3xl md:text-4xl text-amber-400 mb-8 font-bold`}
-          >
+          <h2 className={` text-3xl md:text-4xl text-amber-400 mb-8 font-bold`}>
             Ucapan & Doa
           </h2>
 
