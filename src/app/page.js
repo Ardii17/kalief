@@ -50,8 +50,11 @@ const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data
 )}&bgcolor=ffffff&color=064e3b`;
 
 // --- COMPONENT KECIL (Definisi di luar main component agar bersih) ---
-const CornerOrnament = ({ className }) => (
+const CornerOrnament = ({ className, aos }) => (
   <svg
+    data-aos={aos}
+    data-aos-duration="1500"
+    data-aos-offset="0"
     viewBox="0 0 100 100"
     className={`w-24 h-24 md:w-32 md:h-32 absolute fill-current ${className}`}
   >
@@ -161,13 +164,53 @@ function InvitationContent() {
       message: "Semoga menjadi anak yang sholeh, aamiin.",
       status: "hadir",
     },
+    {
+      name: "Hamba Allah",
+      message: "Semoga menjadi anak yang sholeh, aamiin.",
+      status: "hadir",
+    },
+    {
+      name: "Hamba Allah",
+      message: "Semoga menjadi anak yang sholeh, aamiin.",
+      status: "hadir",
+    },
+    {
+      name: "Hamba Allah",
+      message: "Semoga menjadi anak yang sholeh, aamiin.",
+      status: "hadir",
+    },
+    {
+      name: "Hamba Allah",
+      message: "Semoga menjadi anak yang sholeh, aamiin.",
+      status: "hadir",
+    },
+    {
+      name: "Hamba Allah",
+      message: "Semoga menjadi anak yang sholeh, aamiin.",
+      status: "hadir",
+    },
+    {
+      name: "Hamba Allah",
+      message: "Semoga menjadi anak yang sholeh, aamiin.",
+      status: "hadir",
+    },
+    {
+      name: "Hamba Allah",
+      message: "Semoga menjadi anak yang sholeh, aamiin.",
+      status: "hadir",
+    },
+    {
+      name: "Hamba Allah",
+      message: "Semoga menjadi anak yang sholeh, aamiin.",
+      status: "hadir",
+    },
   ]);
   const [inputName, setInputName] = useState("");
   const [inputMessage, setInputMessage] = useState("");
   const [attendance, setAttendance] = useState("hadir");
 
   const musicUrl =
-    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3";
+    "/music/Sabilulungan.mp3";
 
   useEffect(() => {
     AOS.init({ duration: 1000, once: false, easing: "ease-out-cubic" });
@@ -208,8 +251,8 @@ function InvitationContent() {
 
   return (
     <div
-      className={`bg-emerald-950 text-amber-50 font-sans min-h-[100dvh] selection:bg-amber-500 selection:text-emerald-950 ${
-        !isOpen ? "h-[100dvh] overflow-hidden" : ""
+      className={`bg-emerald-950 text-amber-50 font-sans min-h-dvh selection:bg-amber-500 selection:text-white ${
+        !isOpen ? "h-dvh overflow-hidden" : ""
       }`}
     >
       <audio ref={audioRef} src={musicUrl} loop />
@@ -217,7 +260,7 @@ function InvitationContent() {
       {isOpen && (
         <button
           onClick={toggleMusic}
-          className="fixed bottom-6 right-6 z-50 bg-amber-500/80 backdrop-blur-md text-emerald-950 p-3 rounded-full shadow-xl border-2 border-amber-300 hover:bg-amber-400 transition-all duration-300 hover:scale-105"
+          className="fixed bottom-6 right-6 z-50 bg-amber-500/80 backdrop-blur-md text-white p-3 rounded-full shadow-xl border-2 border-amber-300 hover:bg-amber-400 transition-all duration-300 hover:scale-105"
         >
           {isPlaying ? (
             <Music2 size={24} className="animate-spin-slow" />
@@ -228,8 +271,8 @@ function InvitationContent() {
       )}
 
       {/* HALAMAN 1: COVER */}
-      <section className="relative h-[100dvh] w-full flex flex-col items-center justify-center p-6 overflow-hidden z-20">
-        <div className="absolute inset-0 bg-gradient-to-b from-emerald-900 via-emerald-950 to-emerald-950 z-[-2]"></div>
+      <section className="relative h-dvh w-full flex flex-col items-center justify-center p-6 overflow-hidden z-20">
+        <div className="absolute inset-0 bg-linear-to-b from-emerald-900 via-emerald-950 to-emerald-950 z-[-2]"></div>
         <div
           data-aos="zoom-in"
           data-aos-duration="2000"
@@ -247,34 +290,22 @@ function InvitationContent() {
           <div className="absolute inset-0 bg-amber-500 mix-blend-overlay opacity-40"></div>
         </div>
 
-        <div
-          data-aos="fade-down-right"
-          data-aos-duration="1500"
-          className="absolute top-0 left-0"
-        >
-          <CornerOrnament className="text-amber-500" />
-        </div>
-        <div
-          data-aos="fade-down-left"
-          data-aos-duration="1500"
-          className="absolute top-0 right-0"
-        >
-          <CornerOrnament className="text-amber-500 transform scale-x-[-1]" />
-        </div>
-        <div
-          data-aos="fade-up-right"
-          data-aos-duration="1500"
-          className="absolute bottom-0 left-0"
-        >
-          <CornerOrnament className="text-amber-500 transform scale-y-[-1]" />
-        </div>
-        <div
-          data-aos="fade-up-left"
-          data-aos-duration="1500"
-          className="absolute bottom-0 right-0"
-        >
-          <CornerOrnament className="text-amber-500 transform scale-[-1]" />
-        </div>
+        <CornerOrnament
+          aos="fade-down-right"
+          className="top-0 left-0 text-amber-500"
+        />
+        <CornerOrnament
+          aos="fade-down-right"
+          className="top-0 right-0 text-amber-500 transform scale-x-[-1]"
+        />
+        <CornerOrnament
+          aos="fade-down-right"
+          className="bottom-0 left-0 text-amber-500 transform scale-y-[-1]"
+        />
+        <CornerOrnament
+          aos="fade-down-right"
+          className="bottom-0 right-0 text-amber-500 transform scale-[-1]"
+        />
 
         <div className="text-center z-10 space-y-5 relative">
           <div data-aos="zoom-in" data-aos-delay="500">
@@ -298,7 +329,7 @@ function InvitationContent() {
             data-aos="zoom-out"
             data-aos-delay="800"
             data-aos-duration="1500"
-            className={`${alice.className} text-6xl md:text-8xl text-transparent bg-clip-text bg-gradient-to-b from-amber-300 to-amber-500 font-bold leading-tight drop-shadow-2xl py-2`}
+            className={`${alice.className} text-6xl md:text-8xl text-transparent bg-clip-text bg-linear-to-b from-amber-300 to-amber-500 font-bold leading-tight drop-shadow-2xl py-2`}
           >
             {DATA.namaPanggilan}
           </h1>
@@ -313,7 +344,7 @@ function InvitationContent() {
               Kepada Yth. Bapak/Ibu/Saudara/i
             </p>
             <div className="px-8 py-3 rounded-xl bg-emerald-900/40 border border-amber-500/30 backdrop-blur-sm shadow-[0_0_15px_rgba(0,0,0,0.2)]">
-              <h3 className="text-xl md:text-2xl font-bold text-amber-300 capitalize text-shadow-sm">
+              <h3 className="text-xl font-bold text-amber-300 capitalize text-shadow-sm">
                 {guestName}
               </h3>
             </div>
@@ -322,13 +353,13 @@ function InvitationContent() {
           <div className="mt-10 pb-10" data-aos="fade-up" data-aos-delay="1200">
             <button
               onClick={handleOpen}
-              className="group relative px-8 py-3 bg-gradient-to-r from-emerald-800 to-emerald-700 text-amber-300 rounded-full border border-amber-400/70 hover:from-amber-500 hover:to-amber-600 hover:text-emerald-950 transition-all duration-500 shadow-[0_0_20px_rgba(251,191,36,0.2)] overflow-hidden hover:shadow-[0_0_30px_rgba(251,191,36,0.6)] hover:scale-105 active:scale-95"
+              className="group relative px-8 py-3 bg-linear-to-r from-emerald-800 to-emerald-700 text-amber-300 rounded-full border border-amber-400/70 hover:from-amber-500 hover:to-amber-600 hover:text-white transition-all duration-500 shadow-[0_0_20px_rgba(251,191,36,0.2)] overflow-hidden hover:shadow-[0_0_30px_rgba(251,191,36,0.6)] hover:scale-105 active:scale-95"
             >
               <span className="relative z-10 flex items-center gap-3 font-semibold tracking-wider uppercase text-sm">
                 <ScanLine size={18} />
                 Buka Undangan
               </span>
-              <div className="absolute top-0 -left-[100%] w-[50%] h-full bg-gradient-to-r from-transparent via-white/40 to-transparent transform -skew-x-12 transition-all duration-1000 group-hover:left-[150%]"></div>
+              <div className="absolute top-0 -left-full w-[50%] h-full bg-linear-to-r from-transparent via-white/40 to-transparent transform -skew-x-12 transition-all duration-1000 group-hover:left-[150%]"></div>
             </button>
           </div>
         </div>
@@ -341,7 +372,7 @@ function InvitationContent() {
           isOpen ? "opacity-100" : "opacity-0"
         }`}
       >
-        <section className="py-20 px-6 text-center max-w-3xl mx-auto">
+        <section className="py-12 px-6 text-center max-w-3xl mx-auto">
           <div className="relative w-40 h-12 mx-auto mb-10 opacity-70 invert">
             <Image
               src="https://upload.wikimedia.org/wikipedia/commons/2/27/Basmala.svg"
@@ -362,8 +393,13 @@ function InvitationContent() {
             data-aos="zoom-in"
             className="my-10 p-1.5 border-[3px] border-amber-400/50 rounded-full w-52 h-52 mx-auto relative shadow-[0_0_30px_rgba(251,191,36,0.2)]"
           >
-            <div className="w-full h-full rounded-full bg-gradient-to-br from-emerald-800 to-emerald-900 overflow-hidden flex items-center justify-center relative border border-emerald-700">
-              <span className="text-7xl drop-shadow-lg">👦🏻</span>
+            <div className="w-full h-full rounded-full bg-linear-to-br from-emerald-800 to-emerald-900 overflow-hidden flex items-center justify-center relative border border-emerald-700">
+              <Image
+                src="/images/2.jpeg"
+                alt="Ornamen Anak"
+                fill
+                className="object-cover absolute inset-0"
+              />
             </div>
           </div>
           <h2
@@ -384,8 +420,8 @@ function InvitationContent() {
           </div>
           <div className="bg-emerald-900/40 p-8 rounded-2xl border border-amber-500/30 backdrop-blur-md shadow-inner mx-auto max-w-xl">
             <h3 className="text-amber-300 font-bold mb-2 uppercase text-xs tracking-[0.3em] flex items-center justify-center gap-2">
-              <span className="h-[1px] w-8 bg-amber-500/50"></span>Menuju Hari
-              Bahagia<span className="h-[1px] w-8 bg-amber-500/50"></span>
+              <span className="h-px w-8 bg-amber-500/50"></span>Menuju Hari
+              Bahagia<span className="h-px w-8 bg-amber-500/50"></span>
             </h3>
             <Countdown targetDate={DATA.targetDate} />
           </div>
@@ -394,12 +430,13 @@ function InvitationContent() {
         <section className="py-16 px-6 bg-emerald-900/30 text-center relative overflow-hidden border-y border-amber-500/20">
           <CornerOrnament className="top-0 left-0 text-amber-600 w-20 h-20 opacity-20" />
           <CornerOrnament className="bottom-0 right-0 text-amber-600 w-20 h-20 opacity-20 transform scale-[-1]" />
+
+          <DividerOrnament className="text-amber-500/50 w-24 mb-4" />
           <h2
             data-aos="fade-down"
-            className={`${alice.className} text-4xl text-amber-400 mb-12 drop-shadow inline-block relative`}
+            className={`${alice.className} text-3xl md:text-4xl text-amber-400 mb-12 font-bold`}
           >
             Detail Acara
-            <DividerOrnament className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-24 text-amber-500/50" />
           </h2>
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto relative z-10">
             <div
@@ -438,7 +475,7 @@ function InvitationContent() {
                 href={DATA.mapLink}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-2.5 bg-amber-600 rounded-full text-sm font-bold uppercase tracking-wider hover:bg-amber-500 transition shadow-md text-emerald-950 hover:shadow-amber-500/20"
+                className="inline-flex items-center gap-2 px-6 py-2.5 bg-amber-600 rounded-full text-sm font-bold uppercase tracking-wider hover:bg-amber-500 transition shadow-md text-white hover:shadow-amber-500/20"
               >
                 <MapPin size={16} /> Google Maps
               </a>
@@ -448,7 +485,7 @@ function InvitationContent() {
             data-aos="zoom-in-up"
             className="mt-12 bg-white p-4 inline-block rounded-2xl shadow-[0_10px_25px_rgba(0,0,0,0.2)] max-w-xs border-4 border-amber-400/30 relative group"
           >
-            <div className="absolute -inset-1 bg-gradient-to-tr from-amber-400 to-emerald-500 rounded-2xl blur opacity-20 group-hover:opacity-40 transition-opacity"></div>
+            <div className="absolute -inset-1 bg-linear-to-tr from-amber-400 to-emerald-500 rounded-2xl blur opacity-20 group-hover:opacity-40 transition-opacity"></div>
             <div className="relative bg-white rounded-xl p-2">
               <h3 className="text-emerald-800 font-bold mb-3 text-sm uppercase tracking-widest">
                 Scan Lokasi
@@ -533,13 +570,13 @@ function InvitationContent() {
               </div>
               <button
                 type="submit"
-                className="w-full py-3 bg-gradient-to-r from-amber-600 to-amber-500 text-emerald-950 font-bold rounded-lg shadow-lg hover:shadow-amber-500/20 hover:scale-[1.02] transition-all flex items-center justify-center gap-2"
+                className="w-full py-3 bg-linear-to-r from-amber-600 to-amber-500 text-white font-bold rounded-lg shadow-lg hover:shadow-amber-500/20 hover:scale-[1.02] transition-all flex items-center justify-center gap-2"
               >
                 <Send size={18} />
                 Kirim Ucapan
               </button>
             </form>
-            <div className="max-h-[400px] overflow-y-auto space-y-4 pr-2 custom-scrollbar">
+            <div className="max-h-100 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
               {wishes.map((item, index) => (
                 <div
                   key={index}
