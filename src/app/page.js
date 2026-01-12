@@ -520,7 +520,7 @@ export default function Invitation() {
             {/* LIST UCAPAN (SCROLLABLE) */}
             <div className="max-h-100 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
               {wishes.length === 0 && (
-                <p className="text-emerald-500 italic">Belum ada ucapan</p>
+                <p className="text-emerald-500 italic">Belum ada ucapan.</p>
               )}
               {wishes.map((item, index) => (
                 <div
