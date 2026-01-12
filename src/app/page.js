@@ -164,46 +164,6 @@ function InvitationContent() {
       message: "Semoga menjadi anak yang sholeh, aamiin.",
       status: "hadir",
     },
-    {
-      name: "Hamba Allah",
-      message: "Semoga menjadi anak yang sholeh, aamiin.",
-      status: "hadir",
-    },
-    {
-      name: "Hamba Allah",
-      message: "Semoga menjadi anak yang sholeh, aamiin.",
-      status: "hadir",
-    },
-    {
-      name: "Hamba Allah",
-      message: "Semoga menjadi anak yang sholeh, aamiin.",
-      status: "hadir",
-    },
-    {
-      name: "Hamba Allah",
-      message: "Semoga menjadi anak yang sholeh, aamiin.",
-      status: "hadir",
-    },
-    {
-      name: "Hamba Allah",
-      message: "Semoga menjadi anak yang sholeh, aamiin.",
-      status: "hadir",
-    },
-    {
-      name: "Hamba Allah",
-      message: "Semoga menjadi anak yang sholeh, aamiin.",
-      status: "hadir",
-    },
-    {
-      name: "Hamba Allah",
-      message: "Semoga menjadi anak yang sholeh, aamiin.",
-      status: "hadir",
-    },
-    {
-      name: "Hamba Allah",
-      message: "Semoga menjadi anak yang sholeh, aamiin.",
-      status: "hadir",
-    },
   ]);
   const [inputName, setInputName] = useState("");
   const [inputMessage, setInputMessage] = useState("");
@@ -291,19 +251,19 @@ function InvitationContent() {
         </div>
 
         <CornerOrnament
-          aos="fade-down-right"
+          // aos="fade-down-right"
           className="top-0 left-0 text-amber-500"
         />
         <CornerOrnament
-          aos="fade-down-right"
+          // aos="fade-down-right"
           className="top-0 right-0 text-amber-500 transform scale-x-[-1]"
         />
         <CornerOrnament
-          aos="fade-down-right"
+          // aos="fade-down-right"
           className="bottom-0 left-0 text-amber-500 transform scale-y-[-1]"
         />
         <CornerOrnament
-          aos="fade-down-right"
+          // aos="fade-down-right"
           className="bottom-0 right-0 text-amber-500 transform scale-[-1]"
         />
 
