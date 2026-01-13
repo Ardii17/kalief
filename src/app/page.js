@@ -41,8 +41,7 @@ const DATA = {
     "Keluarga Besar Alm. Awih & Almh. Aroh",
     "Keluarga Besar Iman & Eti",
   ],
-  mapLink:
-    "https://www.google.com/maps/search/?api=1&query=Kp.+Girihieum+RT+03+RW+09+Desa+Pangauban+Kec.+Pacet+Kab.+Bandung?q=Kp.+Girihieum+RT+03+RW+09,+Desa+Pangauban,+Kec.+Pacet,+Kab.+Bandung+40385",
+  mapLink: "https://maps.app.goo.gl/fxjzNZAqKmrqFJzj8",
   coverOrnamentImg:
     "https://images.unsplash.com/photo-1585314062340-f1a5a7c9328d?q=80&w=1000&auto=format&fit=crop",
 };
