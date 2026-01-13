@@ -691,7 +691,7 @@ function InvitationContent() {
                 className="disabled:cursor-not-allowed disabled:opacity-50 w-full py-3 bg-linear-to-r from-amber-600 to-amber-500 text-white font-bold rounded-lg shadow-lg hover:shadow-amber-500/20 not-disabled:hover:scale-[1.02] transition-all flex items-center justify-center gap-2"
               >
                 <Send size={18} />
-                {loading ? "Mengirim..." : "Kirim Ucapan"}
+                {loading ? "Tunggu Sebentar..." : "Kirim Ucapan"}
               </button>
             </form>
             <div className="max-h-100 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
