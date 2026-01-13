@@ -4,6 +4,7 @@
 
 // HAPUS force-dynamic yang lama, kita pakai cara Suspense murni
 import React, { useState, useEffect, useRef, Suspense } from "react";
+import { HiClipboardCopy, HiCheckCircle } from "react-icons/hi";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { Alice } from "next/font/google";
@@ -18,6 +19,7 @@ import {
   User,
   CheckCircle,
   XCircle,
+  HelpCircle,
 } from "lucide-react";
 import AOS from "aos";
 import "aos/dist/aos.css";
@@ -28,13 +30,13 @@ const alice = Alice({ subsets: ["latin"], weight: "400", display: "swap" });
 const DATA = {
   namaLengkap: "Muhamad Kalief",
   namaPanggilan: "Kalief",
-  namaAyah: "Bapak Ahmad Saemi",
-  namaIbu: "Ibu Rima Widiasari",
+  namaAyah: "Ahmad Saemi",
+  namaIbu: "Rima Widiasari",
   tanggal: "Minggu, 1 Februari 2026",
-  waktu: "08.00 WIB - Selesai",
+  waktu: "09.00 WIB - Selesai",
   alamat:
     "Kp. Girihieum RT 03 RW 09, Desa Pangauban, Kec. Pacet, Kab. Bandung 40385",
-  targetDate: "2026-02-01T08:00:00",
+  targetDate: "2026-02-01T09:00:00",
   turutMengundang: [
     "Keluarga Besar Alm. Awih & Almh. Aroh",
     "Keluarga Besar Iman & Eti",
@@ -49,12 +51,44 @@ const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data
   DATA.mapLink
 )}&bgcolor=ffffff&color=064e3b`;
 
+const giftData = [
+  {
+    id: 1,
+    bank: "dana", // Bisa diganti Logo Image jika ada
+    number: "088218648804",
+    name: "Rima Widiasari",
+    color: "bg-blue-500", // Warna identitas DANA
+  },
+  {
+    id: 2,
+    bank: "seabank",
+    number: "901358454673",
+    name: "Ahmad Saemi",
+    color: "bg-orange-500", // Warna identitas SeaBank
+  },
+];
+
+const BankLogo = ({ type }) => {
+  if (type === "dana") {
+    return (
+      <Image src="/logos/dana.svg" alt="DANA Logo" width={100} height={30} />
+    );
+  } else if (type === "seabank") {
+    return (
+      <Image
+        src="/logos/seabank.svg"
+        alt="SeaBank Logo"
+        width={100}
+        height={30}
+      />
+    );
+  }
+  return null;
+};
+
 // --- COMPONENT KECIL (Definisi di luar main component agar bersih) ---
 const CornerOrnament = ({ className, aos }) => (
   <svg
-    data-aos={aos}
-    data-aos-duration="1500"
-    data-aos-offset="0"
     viewBox="0 0 100 100"
     className={`w-24 h-24 md:w-32 md:h-32 absolute fill-current ${className}`}
   >
@@ -150,6 +184,14 @@ function InvitationContent() {
   const [isPlaying, setIsPlaying] = useState(false);
   const contentRef = useRef(null);
   const audioRef = useRef(null);
+  const [copiedId, setCopiedId] = useState(null);
+  const [wishes, setWishes] = useState([]);
+  const [formData, setFormData] = useState({
+    Nama: "",
+    Ucapan: "",
+    Kehadiran: "hadir",
+  });
+  const [loading, setLoading] = useState(false);
 
   // AMBIL NAMA TAMU (Aman di dalam component ini)
   const searchParams = useSearchParams();
@@ -158,19 +200,10 @@ function InvitationContent() {
     ? searchParams.get("to") || "Tamu Undangan"
     : "Tamu Undangan";
 
-  const [wishes, setWishes] = useState([
-    {
-      name: "Hamba Allah",
-      message: "Semoga menjadi anak yang sholeh, aamiin.",
-      status: "hadir",
-    },
-  ]);
-  const [inputName, setInputName] = useState("");
-  const [inputMessage, setInputMessage] = useState("");
-  const [attendance, setAttendance] = useState("hadir");
+  const musicUrl = "/music/Sabilulungan.mp3";
 
-  const musicUrl =
-    "/music/Sabilulungan.mp3";
+  const SCRIPT_URL =
+    "https://script.google.com/macros/s/AKfycbxqqQENZQavhpefYywort2UQmKC1MxpoM6SIsJ9QxQiut0OKzFacjVqNjij7atFEUbG/exec";
 
   useEffect(() => {
     AOS.init({ duration: 1000, once: false, easing: "ease-out-cubic" });
@@ -195,19 +228,42 @@ function InvitationContent() {
     setIsPlaying(!isPlaying);
   };
 
-  const handleSubmitWish = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!inputName || !inputMessage) return;
-    const newWish = {
-      name: inputName,
-      message: inputMessage,
-      status: attendance,
-    };
-    setWishes([newWish, ...wishes]);
-    setInputName("");
-    setInputMessage("");
-    alert("Terima kasih atas ucapan dan doanya!");
+    setLoading(true);
+
+    // Format data untuk Google Sheets form-data
+    const formBody = new URLSearchParams();
+    formBody.append("Nama", formData.Nama);
+    formBody.append("Ucapan", formData.Ucapan);
+    formBody.append("Kehadiran", formData.Kehadiran);
+
+    try {
+      await fetch(SCRIPT_URL, {
+        method: "POST",
+        body: formBody,
+        mode: "no-cors", // Penting untuk Google Sheets
+        // Catatan: no-cors berarti kita ga bisa baca response JSON successnya,
+        // tapi data tetap masuk.
+      });
+
+      // Update UI Manual (Optimistic UI)
+      setWishes([{ ...formData, Waktu: "Baru saja" }, ...wishes]);
+      setFormData({ Nama: "", Ucapan: "", Kehadiran: "Hadir" });
+      alert("Terima kasih ucapannya!");
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    fetch(SCRIPT_URL)
+      .then((res) => res.json())
+      .then((data) => setWishes(data.reverse())) // Reverse biar yang baru paling atas
+      .catch((err) => console.error(err));
+  }, []);
 
   return (
     <div
@@ -251,19 +307,27 @@ function InvitationContent() {
         </div>
 
         <CornerOrnament
-          // aos="fade-down-right"
+          data-aos="fade-down-right"
+          data-aos-duration="1500"
+          data-aos-offset="0"
           className="top-0 left-0 text-amber-500"
         />
         <CornerOrnament
           // aos="fade-down-right"
+          data-aos-duration="1500"
+          data-aos-offset="0"
           className="top-0 right-0 text-amber-500 transform scale-x-[-1]"
         />
         <CornerOrnament
           // aos="fade-down-right"
+          data-aos-duration="1500"
+          data-aos-offset="0"
           className="bottom-0 left-0 text-amber-500 transform scale-y-[-1]"
         />
         <CornerOrnament
           // aos="fade-down-right"
+          data-aos-duration="1500"
+          data-aos-offset="0"
           className="bottom-0 right-0 text-amber-500 transform scale-[-1]"
         />
 
@@ -355,7 +419,7 @@ function InvitationContent() {
           >
             <div className="w-full h-full rounded-full bg-linear-to-br from-emerald-800 to-emerald-900 overflow-hidden flex items-center justify-center relative border border-emerald-700">
               <Image
-                src="/images/2.jpeg"
+                src="/images/2.png"
                 alt="Ornamen Anak"
                 fill
                 className="object-cover absolute inset-0"
@@ -466,6 +530,96 @@ function InvitationContent() {
           </div>
         </section>
 
+        <section className="py-20 px-4 bg-transparent relative overflow-hidden">
+          <div className="max-w-5xl mx-auto">
+            {/* Judul Section */}
+            <div className="text-center mb-12" data-aos="fade-up">
+              <h2 className="text-4xl font-serif font-bold text-amber-400 mb-4 drop-shadow-sm">
+                Tanda Kasih
+              </h2>
+              <p className="text-emerald-100 max-w-2xl mx-auto leading-relaxed font-medium">
+                Doa restu Anda merupakan karunia yang sangat berarti bagi kami.
+                Dan jika memberi adalah ungkapan tanda kasih Anda, Anda dapat
+                memberi kado secara non-tunai.
+              </p>
+            </div>
+
+            {/* Grid Kartu */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {giftData.map((item) => (
+                <div
+                  key={item.id}
+                  data-aos={item.aos}
+                  data-aos-duration="1000"
+                  // UBAH 1: Background diganti warna "Warm Stone" (krem keabu-abuan) supaya tidak silau
+                  className="relative group bg-[#EBE7DF] rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.08)] border border-[#d6d3c9] overflow-hidden transition-all duration-500 transform hover:-translate-y-1"
+                >
+                  {/* Dekorasi: Pattern Halus (Noise) agar tidak terlihat flat/plastik */}
+                  <div
+                    className="absolute inset-0 opacity-[0.03]"
+                    style={{
+                      backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+                    }}
+                  ></div>
+
+                  {/* Dekorasi: Aksen lengkung di pojok kanan atas (Warna Emas Redup) */}
+                  <div className="absolute -top-10 -right-10 w-32 h-32 bg-amber-200/30 rounded-full blur-2xl group-hover:bg-amber-300/40 transition-all duration-500"></div>
+
+                  {/* CONTENT LAYER */}
+                  <div className="relative z-10 p-8 flex flex-col items-center justify-center text-center space-y-4">
+                    {/* Logo Bank - Backgroundnya dibuat agak gelap sedikit biar logo pop-up */}
+                    <div className="p-3 bg-[#F5F2EA] rounded-xl border border-[#e0dcd0] shadow-sm">
+                      <BankLogo type={item.bank} />
+                    </div>
+
+                    <div className="space-y-1 py-2">
+                      {/* Nama Pemilik - Warna Cokelat Tua (Lebih soft dari hitam) */}
+                      <h3 className="font-serif text-xl md:text-2xl text-[#5c554b] font-bold tracking-wide uppercase">
+                        {item.name}
+                      </h3>
+
+                      {/* Nomor Rekening - Warna Emas Tembaga (Gelap) */}
+                      <p className="text-[#9ea4a5] text-sm font-semibold tracking-wider uppercase mb-1">
+                        Nomor Rekening
+                      </p>
+                      <p className="text-[#8B5E3C] text-2xl font-bold tracking-widest font-mono drop-shadow-sm">
+                        {item.number}
+                      </p>
+                    </div>
+
+                    {/* Tombol Salin - Warna Emas Solid tapi "Deep" (Tidak kuning neon) */}
+                    <div className="pt-2 w-full flex justify-center">
+                      <button
+                        onClick={() => handleCopy(item.id, item.number)}
+                        className={`
+          flex items-center justify-center gap-2 px-8 py-3 rounded-xl font-semibold text-sm tracking-wide transition-all duration-300 w-full max-w-50 shadow-sm hover:shadow-md
+          ${
+            copiedId === item.id
+              ? "bg-[#4a7c59] text-white" // Hijau Tua (Sage Dark) saat sukses
+              : "bg-[#c7a065] hover:bg-[#b58e53] text-white" // Emas Tembaga (Matte Gold)
+          }
+        `}
+                      >
+                        {copiedId === item.id ? (
+                          <>
+                            <HiCheckCircle className="w-5 h-5" />
+                            <span>Tersalin</span>
+                          </>
+                        ) : (
+                          <>
+                            <HiClipboardCopy className="w-5 h-5" />
+                            <span>Salin</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         <section className="py-16 px-6 text-center max-w-3xl mx-auto">
           <DividerOrnament className="text-amber-500/50 w-24 mb-4" />
           <h2
@@ -478,10 +632,7 @@ function InvitationContent() {
             data-aos="fade-up"
             className="bg-emerald-900/40 p-6 md:p-8 rounded-2xl border border-amber-500/30 shadow-lg backdrop-blur-sm"
           >
-            <form
-              onSubmit={handleSubmitWish}
-              className="text-left space-y-4 mb-10"
-            >
+            <form onSubmit={handleSubmit} className="text-left space-y-4 mb-10">
               <div>
                 <label className="block text-amber-200 text-sm mb-1 ml-1">
                   Nama
@@ -491,8 +642,10 @@ function InvitationContent() {
                   <input
                     type="text"
                     placeholder="Nama Anda"
-                    value={inputName}
-                    onChange={(e) => setInputName(e.target.value)}
+                    value={formData.Nama}
+                    onChange={(e) =>
+                      setFormData({ ...formData, Nama: e.target.value })
+                    }
                     className="w-full bg-emerald-950/80 border border-emerald-700 rounded-lg py-2.5 pl-10 pr-4 text-emerald-100 placeholder-emerald-700 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition"
                     required
                   />
@@ -506,8 +659,10 @@ function InvitationContent() {
                   <MessageSquare className="absolute left-3 top-3 text-emerald-500 w-5 h-5" />
                   <textarea
                     placeholder="Tuliskan ucapan dan doa..."
-                    value={inputMessage}
-                    onChange={(e) => setInputMessage(e.target.value)}
+                    value={formData.Ucapan}
+                    onChange={(e) =>
+                      setFormData({ ...formData, Ucapan: e.target.value })
+                    }
                     rows="3"
                     className="w-full bg-emerald-950/80 border border-emerald-700 rounded-lg py-2.5 pl-10 pr-4 text-emerald-100 placeholder-emerald-700 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition resize-none"
                     required
@@ -519,8 +674,10 @@ function InvitationContent() {
                   Konfirmasi Kehadiran
                 </label>
                 <select
-                  value={attendance}
-                  onChange={(e) => setAttendance(e.target.value)}
+                  value={formData.Kehadiran}
+                  onChange={(e) =>
+                    setFormData({ ...formData, Kehadiran: e.target.value })
+                  }
                   className="w-full bg-emerald-950/80 border border-emerald-700 rounded-lg py-2.5 px-4 text-emerald-100 focus:outline-none focus:border-amber-500 transition appearance-none"
                 >
                   <option value="hadir">Hadir</option>
@@ -530,10 +687,11 @@ function InvitationContent() {
               </div>
               <button
                 type="submit"
-                className="w-full py-3 bg-linear-to-r from-amber-600 to-amber-500 text-white font-bold rounded-lg shadow-lg hover:shadow-amber-500/20 hover:scale-[1.02] transition-all flex items-center justify-center gap-2"
+                disabled={loading}
+                className="disabled:cursor-not-allowed disabled:opacity-50 w-full py-3 bg-linear-to-r from-amber-600 to-amber-500 text-white font-bold rounded-lg shadow-lg hover:shadow-amber-500/20 not-disabled:hover:scale-[1.02] transition-all flex items-center justify-center gap-2"
               >
                 <Send size={18} />
-                Kirim Ucapan
+                {loading ? "Mengirim..." : "Kirim Ucapan"}
               </button>
             </form>
             <div className="max-h-100 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
@@ -545,30 +703,34 @@ function InvitationContent() {
                   <div className="flex items-center justify-between mb-2">
                     <h4 className="font-bold text-amber-200 text-sm md:text-base flex items-center gap-2">
                       <div className="w-8 h-8 rounded-full bg-emerald-800 flex items-center justify-center text-xs text-amber-400 border border-amber-500/20">
-                        {item.name.charAt(0).toUpperCase()}
+                        {item.Nama.charAt(0).toUpperCase()}
                       </div>
-                      {item.name}
+                      {item.Nama}
                     </h4>
                     <span
                       className={`text-[10px] px-2 py-1 rounded-full border ${
-                        item.status === "hadir"
+                        item.Kehadiran === "hadir"
                           ? "bg-emerald-900 text-emerald-300 border-emerald-700"
                           : "bg-red-900/50 text-red-300 border-red-800"
                       }`}
                     >
-                      {item.status === "hadir" ? (
+                      {item.Kehadiran === "hadir" ? (
                         <span className="flex items-center gap-1">
                           <CheckCircle size={10} /> Hadir
                         </span>
+                      ) : item.Kehadiran === "tidak" ? (
+                        <span className="flex items-center gap-1">
+                          <XCircle size={10} /> Tidak Hadir
+                        </span>
                       ) : (
                         <span className="flex items-center gap-1">
-                          <XCircle size={10} /> Absen
+                          <HelpCircle size={10} /> Ragu
                         </span>
                       )}
                     </span>
                   </div>
                   <p className="text-emerald-100/80 text-sm leading-relaxed pl-10">
-                    "{item.message}"
+                    "{item.Ucapan}"
                   </p>
                 </div>
               ))}
