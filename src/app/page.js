@@ -258,6 +258,13 @@ function InvitationContent() {
     }
   };
 
+  const handleCopy = (id, text) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 2000);
+    });
+  };
+
   useEffect(() => {
     fetch(SCRIPT_URL)
       .then((res) => res.json())
